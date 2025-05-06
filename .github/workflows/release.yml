@@ -1,0 +1,30 @@
+name: Build Plugin ZIP
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+
+    - name: Create ZIP of plugin
+      run: |
+        cd ..
+        zip -r wordpress-custom-media-folder-manager.zip wordpress-custom-media-folder-manager -x "*.git*" -x "*tests*"
+
+    - name: Upload release asset
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ../wordpress-custom-media-folder-manager.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
